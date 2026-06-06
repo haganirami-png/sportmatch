@@ -1024,6 +1024,30 @@ function StatBar({ value, max, color }) {
     </div>
   );
 }
+
+function useCountUp(target, duration=1200) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!target || target === "—") { setVal(target); return; }
+    const num = parseInt(String(target).replace(/,/g,"")) || 0;
+    if (num === 0) { setVal(0); return; }
+    const start = Date.now();
+    const tick = () => {
+      const p = Math.min(1, (Date.now()-start)/duration);
+      const ease = 1-Math.pow(1-p,3);
+      setVal(Math.round(ease*num));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [target]);
+  return val;
+}
+
+function AnimatedStat({ value, color, size=17 }) {
+  const v = useCountUp(value);
+  return <span style={{ fontWeight:900, fontSize:size, color }}>{v}</span>;
+}
+
 function Screen7({ player, onGoHome }) {
   const [tab, setTab] = useState("overview");
 
@@ -1032,6 +1056,14 @@ function Screen7({ player, onGoHome }) {
     { id:"stats",    label:"Stats" },
     { id:"career",   label:"Career" },
   ];
+
+  const valueIls = player.value_ils || player.שווי_ils || 0;
+  const valueFmt = valueIls > 0 ? `₪${(valueIls/1000).toFixed(0)}K` : "—";
+  const minutes = player.minutes || player.דקות || "—";
+  const apps = player.apps || player.משחקים || "—";
+  const goals = player.goals || player.שערים || 0;
+  const yellow = player.yellow || player.צהובים || 0;
+  const red = player.red || player.אדומים || 0;
 
   return (
     <div style={{ paddingBottom:30 }}>
@@ -1050,7 +1082,11 @@ function Screen7({ player, onGoHome }) {
             display:"flex", alignItems:"center", justifyContent:"center",
             fontSize:48,
             boxShadow:`0 8px 30px ${C.greenGlow}`,
-          }}>{Icon.football}</div>
+          }}>
+            {player.photo || player.תמונה
+              ? <img src={player.photo||player.תמונה} alt={player.name} style={{ width:"100%", height:"100%", borderRadius:20, objectFit:"cover", objectPosition:"top" }}/>
+              : Icon.football}
+          </div>
 
           <div style={{ flex:1, paddingBottom:4 }}>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
@@ -1060,15 +1096,27 @@ function Screen7({ player, onGoHome }) {
             <div style={{ color:C.muted, fontSize:13, marginTop:4 }}>
               {player.team} · {player.league}
             </div>
+            {valueIls > 0 && (
+              <div style={{ marginTop:6, display:"inline-flex", alignItems:"center", gap:6, background:`${C.gold}15`, border:`1px solid ${C.gold}44`, borderRadius:8, padding:"3px 10px" }}>
+                <span style={{ fontSize:12 }}>💰</span>
+                <span style={{ color:C.gold, fontWeight:800, fontSize:13 }}>{valueFmt}</span>
+                <span style={{ color:C.muted, fontSize:10 }}>שווי שוק</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Quick stats */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, paddingBottom:18 }}>
-          {[["goal",player.goals,"שערים"],["calendar",player.apps,"משחקים"],["clock",player.minutes,"דקות"],["target",player.assists,"בישולים"]].map(([ic,v,l]) => (
+          {[
+            ["goal", goals, "שערים"],
+            ["calendar", apps, "משחקים"],
+            ["clock", minutes, "דקות"],
+            ["ycard", yellow, "צהובים"],
+          ].map(([ic,v,l]) => (
             <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:"10px 6px", textAlign:"center" }}>
               <IconEl name={ic} size={18} color={C.green}/>
-              <div style={{ fontWeight:900, fontSize:17, color:C.green, marginTop:2 }}>{v}</div>
+              <AnimatedStat value={v} color={C.green} size={17}/>
               <div style={{ color:C.muted, fontSize:10, marginTop:1 }}>{l}</div>
             </div>
           ))}
@@ -1094,11 +1142,12 @@ function Screen7({ player, onGoHome }) {
         {tab === "overview" && (
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
             {[
-              ["stadium","קבוצה נוכחית",player.team],
-              ["globe","ליגה",player.league],
-              ["location","עמדה",player.position],
-              ["globe2","לאום",player.nationality],
-              ["calendar","תאריך לידה",player.birth],
+              ["stadium","קבוצה נוכחית", player.team],
+              ["globe","ליגה", player.league],
+              ["location","עמדה", player.position||"—"],
+              ["globe2","לאום", player.nationality||"ישראל"],
+              ["calendar","תאריך לידה", player.birth],
+              ...(valueIls>0 ? [["target","שווי שוק", `${valueFmt} (${player.value_eur||player.שווי_eur})`]] : []),
             ].map(([ic,l,v]) => (
               <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:"13px 16px", display:"flex", gap:12, alignItems:"center" }}>
                 <IconEl name={ic} size={20} color={C.teal}/>
@@ -1117,22 +1166,31 @@ function Screen7({ player, onGoHome }) {
             <div style={{ fontSize:16, fontWeight:800, marginBottom:14 }}>עונת 2025/26</div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:20 }}>
               {[
-                ["goal","שערים",player.goals,15,C.green],
-                ["calendar","משחקים",player.apps,38,C.blue],
-                ["clock","דקות",player.minutes,3420,C.gold],
-                ["target","בישולים",player.assists,10,C.green],
-                ["ycard","כרטיסים צהובים",player.yellow,10,"#F59E0B"],
-                ["rcard","כרטיסים אדומים",player.red,5,C.red],
+                ["goal","שערים", goals, 15, C.green],
+                ["calendar","משחקים", apps, 38, C.blue],
+                ["clock","דקות משחק", minutes, 3420, C.gold],
+                ["ycard","כרטיסים צהובים", yellow, 10, "#F59E0B"],
+                ["rcard","כרטיסים אדומים", red, 5, C.red],
               ].map(([ic,l,v,max,col]) => (
                 <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:16, padding:"14px 14px" }}>
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
                     <IconEl name={ic} size={18} color={col}/>
-                    <span style={{ fontWeight:900, fontSize:20, color:col }}>{v}</span>
+                    <AnimatedStat value={v} color={col} size={20}/>
                   </div>
-                  <StatBar value={v} max={max} color={col}/>
+                  <StatBar value={parseInt(v)||0} max={max} color={col}/>
                   <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>{l}</div>
                 </div>
               ))}
+              {valueIls > 0 && (
+                <div style={{ background:C.card, border:`1px solid ${C.gold}44`, borderRadius:16, padding:"14px 14px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
+                    <span style={{ fontSize:18 }}>💰</span>
+                    <span style={{ fontWeight:900, fontSize:20, color:C.gold }}>{valueFmt}</span>
+                  </div>
+                  <div style={{ height:4, background:C.border, borderRadius:2 }}/>
+                  <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>שווי שוק</div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1296,22 +1354,22 @@ async function searchPlayer(data) {
   }
 
   const result = await response.json();
-  // Map API results to app format
   return (result.results || []).map(p => ({
     name: p.name,
     team: p.team || "",
     league: p.league || "",
     position: p.position || "—",
-    apps: p.apps || "—",
-    goals: p.goals || "0",
-    assists: p.assists || "0",
-    minutes: p.minutes || "—",
-    yellow: p.yellow || "0",
-    red: p.red || "0",
+    apps: p.apps || p.משחקים || "—",
+    goals: p.goals || p.שערים || "0",
+    minutes: p.minutes || p.דקות || "—",
+    yellow: p.yellow || p.צהובים || "0",
+    red: p.red || p.אדומים || "0",
     birth: p.birth || "",
-    photo: p.photo || "",
+    photo: p.photo || p.תמונה || "",
     nationality: "ישראל",
     similarity: p.similarity || 0,
+    value_eur: p.שווי_eur || "",
+    value_ils: p.שווי_ils || 0,
   }));
 }
 
