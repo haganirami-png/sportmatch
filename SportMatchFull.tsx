@@ -1347,7 +1347,7 @@ async function searchPlayer(data) {
   const last = data?.last || "";
   const year = data?.year || "";
 
-  const apiUrl = "https://control-locations-loves-aspect.trycloudflare.com/search?" + new URLSearchParams({
+  const apiUrl = "https://hammer-involves-magic-concrete.trycloudflare.com/search?" + new URLSearchParams({
     first,
     last,
     year,
