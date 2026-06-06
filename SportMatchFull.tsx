@@ -1368,8 +1368,8 @@ async function searchPlayer(data) {
     photo: p.photo || p.תמונה || "",
     nationality: "ישראל",
     similarity: p.similarity || 0,
-    value_eur: p.שווי_eur || "",
-    value_ils: p.שווי_ils || 0,
+    value_eur: p.value_eur || p.שווי_eur || "",
+    value_ils: p.value_ils || p.שווי_ils || 0,
   }));
 }
 
