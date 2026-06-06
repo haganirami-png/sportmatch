@@ -1025,6 +1025,12 @@ function StatBar({ value, max, color }) {
   );
 }
 
+function AnimatedValueK({ value }) {
+  const v = useCountUp(value);
+  const k = Math.round(v / 1000);
+  return <span>₪{k.toLocaleString()}K</span>;
+}
+
 function useCountUp(target, duration=1200) {
   const [val, setVal] = useState(0);
   useEffect(() => {
@@ -1147,7 +1153,7 @@ function Screen7({ player, onGoHome }) {
               ["location","עמדה", player.position||"—"],
               ["globe2","לאום", player.nationality||"ישראל"],
               ["calendar","תאריך לידה", player.birth],
-              ...(valueIls>0 ? [["target","שווי שוק", `${valueFmt} (${player.value_eur||player.שווי_eur})`]] : []),
+              
             ].map(([ic,l,v]) => (
               <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:"13px 16px", display:"flex", gap:12, alignItems:"center" }}>
                 <IconEl name={ic} size={20} color={C.teal}/>
@@ -1157,6 +1163,17 @@ function Screen7({ player, onGoHome }) {
                 </div>
               </div>
             ))}
+            {valueIls > 0 && (
+              <div style={{ background:C.card, border:`1px solid ${C.gold}44`, borderRadius:14, padding:"13px 16px", display:"flex", gap:12, alignItems:"center" }}>
+                <span style={{ fontSize:20 }}>💰</span>
+                <div style={{ flex:1 }}>
+                  <div style={{ color:C.muted, fontSize:11 }}>שווי שוק</div>
+                  <div style={{ fontWeight:900, fontSize:16, color:C.gold, marginTop:2 }}>
+                    <AnimatedValueK value={valueIls}/>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
