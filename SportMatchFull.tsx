@@ -1289,7 +1289,7 @@ async function searchPlayer(data) {
     last: data.last,
     year: data.year,
   });
-  const response = await fetch(`http://103.214.23.203:5000/search?${params.toString()}`);
+  const response = await fetch(`https://sportmatch-api-production.up.railway.app/search?${params.toString()}`);
 
   if (!response.ok) {
     throw new Error('Player search request failed');
