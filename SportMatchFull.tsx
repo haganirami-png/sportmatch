@@ -1284,18 +1284,35 @@ function BottomNav({ active, onTab, verifiedPlayer }) {
 }
 
 async function searchPlayer(data) {
-  const name =
-  `${data.firstName || data.first || ''} ${data.lastName || data.last || ''}`.trim();
+  const params = new URLSearchParams({
+    first: data.first,
+    last: data.last,
+    year: data.year,
+  });
+  const response = await fetch(`http://103.214.23.203:5000/search?${params.toString()}`);
 
-const birthYear =
-  data.birthYear || data.year || '';
-
-  const response = await fetch(
-    `https://sportmatch-api-production.up.railway.app/search-player?name=${encodeURIComponent(name)}&birthYear=${encodeURIComponent(birthYear)}`
-  );
+  if (!response.ok) {
+    throw new Error('Player search request failed');
+  }
 
   const result = await response.json();
-  return result.players || [];
+  // Map API results to app format
+  return (result.results || []).map(p => ({
+    name: p.name,
+    team: p.team || "",
+    league: p.league || "",
+    position: p.position || "—",
+    apps: p.apps || "—",
+    goals: p.goals || "0",
+    assists: p.assists || "0",
+    minutes: p.minutes || "—",
+    yellow: p.yellow || "0",
+    red: p.red || "0",
+    birth: p.birth || "",
+    photo: p.photo || "",
+    nationality: "ישראל",
+    similarity: p.similarity || 0,
+  }));
 }
 
 export default function App() {
