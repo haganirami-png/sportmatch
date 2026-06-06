@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './SportMatchFull'
+import App from './SportMatchFull.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <App />
