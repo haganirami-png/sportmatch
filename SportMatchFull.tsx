@@ -1284,8 +1284,11 @@ function BottomNav({ active, onTab, verifiedPlayer }) {
 }
 
 async function searchPlayer(data) {
-  const name = `${data.first} ${data.last}`.trim();
-  const birthYear = data.year || '';
+  const name =
+  `${data.firstName || data.first || ''} ${data.lastName || data.last || ''}`.trim();
+
+const birthYear =
+  data.birthYear || data.year || '';
 
   const response = await fetch(
     `https://sportmatch-api-production.up.railway.app/search-player?name=${encodeURIComponent(name)}&birthYear=${encodeURIComponent(birthYear)}`
