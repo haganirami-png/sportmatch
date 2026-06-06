@@ -126,6 +126,11 @@ function IconEl({ name, size=20, color="currentColor" }) {
     smile:    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
     loc:      <svg width={size} height={size} viewBox="0 0 24 24" fill={color}><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>,
     time_:    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
+    money: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round">
+  <circle cx="12" cy="12" r="9"/>
+  <path d="M9 10c0-1.2 1.3-2 3-2s3 .8 3 2-1 1.7-3 2-3 .8-3 2 1.3 2 3 2 3-.8 3-2"/>
+  <path d="M12 7v10"/>
+</svg>,
   };
   return icons[name] || <span style={{display:"inline-block",width:size,height:size,borderRadius:"50%",background:color,opacity:0.3}}/>;
 }
