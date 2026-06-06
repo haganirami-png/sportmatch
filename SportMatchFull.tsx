@@ -1,5 +1,58 @@
 import { useState, useEffect, useRef } from "react";
 
+/* ═══ SEARCH PLAYER VIA CLAUDE API ═══ */
+async function searchPlayer({ first, last, year }) {
+  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  if (!apiKey) return [];
+
+  const prompt = `אתה מסד נתונים של שחקני כדורגל ישראלים. חפש שחקן בשם "${first} ${last}" שנולד בשנת ${year}.
+
+החזר תוצאות בפורמט JSON בלבד (ללא טקסט נוסף), מערך של 1-3 שחקנים שתואמים לחיפוש:
+
+[
+  {
+    "name": "שם מלא",
+    "team": "שם קבוצה",
+    "league": "שם ליגה",
+    "position": "עמדה",
+    "year": ${year},
+    "goals": מספר שערים,
+    "apps": מספר הופעות,
+    "assists": מספר בישולים,
+    "yellow": כרטיסים צהובים,
+    "red": כרטיסים אדומים,
+    "nationality": "לאום",
+    "similarity": אחוז דמיון 0-100
+  }
+]
+
+אם השחקן לא קיים, החזר מערך ריק [].
+ענות JSON בלבד.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-opus-4-5",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || "[]";
+    const clean = text.replace(/```json|```/g, "").trim();
+    return JSON.parse(clean);
+  } catch {
+    return [];
+  }
+}
+
 const C = {
   bg:"#050A0E", bg2:"#071014", surface:"#0A1520",
   card:"#0D1E2A", card2:"#102230", border:"#143040",
