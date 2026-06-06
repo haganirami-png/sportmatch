@@ -1284,19 +1284,12 @@ function BottomNav({ active, onTab, verifiedPlayer }) {
 }
 
 async function searchPlayer(data) {
-  const response = await fetch('https://sportmatch-api-production.up.railway.app/search-player?' + new URLSearchParams({ name: `${firstName} ${lastName}`.trim(), birthYear }).toString(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      firstName: data.first,
-      lastName: data.last,
-      birthYear: data.year,
-    }),
-  });
+  const name = `${data.first} ${data.last}`.trim();
+  const birthYear = data.year || '';
 
-  if (!response.ok) {
-    throw new Error('Player search request failed');
-  }
+  const response = await fetch(
+    `https://sportmatch-api-production.up.railway.app/search-player?name=${encodeURIComponent(name)}&birthYear=${encodeURIComponent(birthYear)}`
+  );
 
   const result = await response.json();
   return result.players || [];
