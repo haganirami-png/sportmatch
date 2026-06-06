@@ -648,7 +648,44 @@ function Screen3({ players, onNext }) {
             }}>
             <div style={{ background: selected===i ? `${C.green}18` : C.card2, padding:"14px 18px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ width:48, height:48, borderRadius:14, background:`${C.green}22`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>⚽</div>
+                {p.photo ? (
+  <img
+    src={p.photo}
+    alt={p.name || "player"}
+    style={{
+      width:48,
+      height:48,
+      borderRadius:14,
+      objectFit:"cover",
+      objectPosition:"top center",
+      border:`1px solid ${C.border}`,
+      flexShrink:0,
+      display:"block",
+      background:`${C.green}22`
+    }}
+    onError={(e)=>{
+      e.currentTarget.style.display = "none";
+      const fallback = e.currentTarget.nextElementSibling as HTMLElement | null;
+      if (fallback) fallback.style.display = "flex";
+    }}
+  />
+) : null}
+
+<div
+  style={{
+    width:48,
+    height:48,
+    borderRadius:14,
+    background:`${C.green}22`,
+    display:p.photo ? "none" : "flex",
+    alignItems:"center",
+    justifyContent:"center",
+    fontSize:24,
+    flexShrink:0
+  }}
+>
+  ⚽
+</div>
                 <div>
                   <div style={{ fontWeight:900, fontSize:16 }}>{p.name}</div>
                   <div style={{ color:C.muted, fontSize:12 }}>{p.team} · {p.league}</div>
