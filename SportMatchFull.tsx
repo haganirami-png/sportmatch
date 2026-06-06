@@ -1283,7 +1283,7 @@ function BottomNav({ active, onTab, verifiedPlayer }) {
   );
 }
 
-export default function MergedApp() {
+export default function App() {
   const [showSplash, setShowSplash]      = useState(false);
   const [tab, setTab]                   = useState("home");
   const [verifiedPlayer, setVerified]   = useState(null);
