@@ -1353,7 +1353,7 @@ async function searchPlayer(data) {
   const last = data?.last || "";
   const year = data?.year || "";
 
-  const apiUrl = "https://arising-targeted-techniques-mainstream.trycloudflare.com/search?" + new URLSearchParams({
+  https://tactics-alot-patients-monster.trycloudflare.com
     first,
     last,
     year,
