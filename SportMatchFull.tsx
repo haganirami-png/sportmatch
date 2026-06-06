@@ -1354,12 +1354,8 @@ async function searchPlayer(data) {
   const year = data?.year || "";
 
   const apiUrl =
-    "https://tactics-alot-patients-monster.trycloudflare.com/search?" +
-    new URLSearchParams({
-      first,
-      last,
-      year,
-    }).toString();
+    "https://sportmatch-api-production.up.railway.app/search?" +
+    new URLSearchParams({ first, last, year }).toString();
 
   const response = await fetch(apiUrl, { method: "GET" });
 
@@ -1368,7 +1364,23 @@ async function searchPlayer(data) {
   }
 
   const result = await response.json();
-  return result.results || result.players || [];
+  return (result.results || []).map(p => ({
+    name: p.name,
+    team: p.team || "",
+    league: p.league || "",
+    position: p.position || "—",
+    apps: p.apps || "0",
+    goals: p.goals || "0",
+    minutes: p.minutes || "0",
+    yellow: p.yellow || "0",
+    red: p.red || "0",
+    birth: p.birth || "",
+    photo: p.photo || "",
+    nationality: "ישראל",
+    similarity: p.similarity || 0,
+    value_eur: p.value_eur || "",
+    value_ils: p.value_ils || 0,
+  }));
 }
 export default function App() {
   const [showSplash, setShowSplash]      = useState(false);
