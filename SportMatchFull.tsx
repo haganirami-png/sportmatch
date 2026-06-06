@@ -1152,10 +1152,11 @@ function Screen7({ player, onGoHome }) {
         {/* OVERVIEW */}
         {tab === "overview" && (
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            {[
+                        {[
               ["stadium","קבוצה נוכחית",player.team],
               ["globe","ליגה",player.league],
               ["location","עמדה",player.position],
+              ["money","שווי שוק", player.value_eur || (player.value_ils ? `₪${Number(player.value_ils).toLocaleString()}` : "—")],
               ["globe2","לאום",player.nationality],
               ["calendar","תאריך לידה",player.birth],
             ].map(([ic,l,v]) => (
