@@ -1347,7 +1347,7 @@ async function searchPlayer(data) {
   const last = data?.last || "";
   const year = data?.year || "";
 
-  const apiUrl = "https://sportmatch-api-production.up.railway.app/search?" + new URLSearchParams({
+  const apiUrl = "http://103.214.23.203:5000/search?" + new URLSearchParams({
     first,
     last,
     year,
