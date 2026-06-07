@@ -1099,105 +1099,142 @@ function Screen7({ player, onGoHome }) {
 
   return (
     <div style={{ paddingBottom:30 }}>
-      {/* ── HERO ── */}
-      <div style={{ position:"relative", overflow:"hidden", borderBottom:`1px solid ${C.border}` }}>
-        {/* layered green ambience */}
-        <div style={{ position:"absolute", inset:0, background:`radial-gradient(120% 90% at 85% -10%, ${C.green}26 0%, transparent 55%), radial-gradient(120% 90% at 0% 0%, ${C.greenDim}22 0%, transparent 50%), linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}/>
-        {/* subtle pitch lines */}
-        <svg width="100%" height="100%" style={{ position:"absolute", inset:0, opacity:0.5 }} preserveAspectRatio="none">
+      {/* ── PREMIUM HERO ── */}
+      <div style={{ position:"relative", overflow:"hidden" }}>
+        {/* layered ambient glow background */}
+        <div style={{ position:"absolute", inset:0, background:`radial-gradient(130% 80% at 80% -20%, ${C.green}33 0%, transparent 52%), radial-gradient(120% 90% at -10% 5%, ${C.teal}1F 0%, transparent 50%), linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}/>
+        {/* soft pitch arcs */}
+        <svg width="100%" height="100%" style={{ position:"absolute", inset:0, opacity:0.55 }} preserveAspectRatio="none">
           <defs>
             <linearGradient id="p7line" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={C.green} stopOpacity="0.14"/>
+              <stop offset="0%" stopColor={C.green} stopOpacity="0.18"/>
               <stop offset="100%" stopColor={C.green} stopOpacity="0"/>
             </linearGradient>
           </defs>
-          <circle cx="86%" cy="6%" r="70" fill="none" stroke="url(#p7line)" strokeWidth="1.5"/>
-          <circle cx="86%" cy="6%" r="38" fill="none" stroke="url(#p7line)" strokeWidth="1.5"/>
+          <circle cx="86%" cy="2%" r="84" fill="none" stroke="url(#p7line)" strokeWidth="1.5"/>
+          <circle cx="86%" cy="2%" r="46" fill="none" stroke="url(#p7line)" strokeWidth="1.5"/>
         </svg>
 
-        <div style={{ position:"relative", padding:"30px 20px 0" }}>
-          <div style={{ display:"flex", gap:16, alignItems:"flex-start", marginBottom:20 }}>
-            {/* Avatar / crest */}
-            <div style={{ position:"relative", flexShrink:0 }}>
-              <div style={{
-                width:96, height:114, borderRadius:24,
-                background:`linear-gradient(160deg,${C.green}30,${C.card2})`,
-                border:`1.5px solid ${C.green}55`,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                color:C.green,
-                boxShadow:`0 12px 36px ${C.greenGlow}, inset 0 1px 0 ${C.green}30`,
-              }}>
-                <div style={{ transform:"scale(2.1)" }}>{Icon.football}</div>
+        <div style={{ position:"relative", padding:"34px 20px 22px" }}>
+          {/* glass profile card */}
+          <div style={{
+            background:`linear-gradient(155deg, ${C.card2}E6, ${C.card}CC)`,
+            border:`1px solid ${C.green}2E`,
+            borderRadius:26, padding:"20px",
+            backdropFilter:"blur(20px)",
+            boxShadow:`0 24px 60px rgba(0,0,0,0.45), inset 0 1px 0 ${C.green}1F`,
+          }}>
+            <div style={{ display:"flex", gap:16, alignItems:"center" }}>
+              {/* Avatar / crest */}
+              <div style={{ position:"relative", flexShrink:0 }}>
+                <div style={{
+                  width:92, height:108, borderRadius:22, overflow:"hidden",
+                  background:`linear-gradient(160deg,${C.green}33,${C.card2})`,
+                  border:`1.5px solid ${C.green}66`,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  color:C.green,
+                  boxShadow:`0 14px 38px ${C.greenGlow}, inset 0 1px 0 ${C.green}33`,
+                }}>
+                  {player.photo
+                    ? <Avatar name={player.name} photo={player.photo} size={92} radius={22}/>
+                    : <div style={{ transform:"scale(2.1)" }}>{Icon.football}</div>}
+                </div>
+                {/* jersey / position chip */}
+                <div style={{
+                  position:"absolute", bottom:-9, insetInlineStart:-9,
+                  minWidth:32, height:32, padding:"0 8px", borderRadius:11,
+                  background:`linear-gradient(135deg,${C.green},${C.greenDim})`, color:C.bg,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  fontWeight:900, fontSize:13.5,
+                  border:`2px solid ${C.bg}`,
+                  boxShadow:`0 8px 18px ${C.greenGlow}`,
+                }}>{player.position?.slice(0,3) || "★"}</div>
               </div>
-              {/* jersey number badge */}
-              <div style={{
-                position:"absolute", bottom:-8, insetInlineStart:-8,
-                minWidth:30, height:30, padding:"0 7px", borderRadius:10,
-                background:C.green, color:C.bg,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontWeight:900, fontSize:14,
-                boxShadow:`0 6px 16px ${C.greenGlow}`,
-              }}>{player.position?.slice(0,3) || "★"}</div>
+
+              <div style={{ flex:1, minWidth:0 }}>
+                {/* premium verified pill */}
+                <span style={{
+                  display:"inline-flex", alignItems:"center", gap:5,
+                  background:`${C.green}1F`, border:`1px solid ${C.green}4D`,
+                  color:C.green, borderRadius:20, padding:"4px 11px",
+                  fontSize:11, fontWeight:800,
+                }}>
+                  <span style={{ display:"flex", transform:"scale(0.78)" }}>{Icon.check}</span>
+                  שחקן מאומת
+                </span>
+                <div style={{ fontSize:25, fontWeight:900, lineHeight:1.12, marginTop:11, letterSpacing:0.2 }}>{player.name}</div>
+                <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginTop:10 }}>
+                  {[player.team, player.league, player.position].filter(Boolean).map((p,idx) => (
+                    <span key={idx} style={{
+                      background: idx===0 ? `${C.green}16` : C.surface,
+                      border:`1px solid ${idx===0 ? C.green+"3A" : C.border}`,
+                      color: idx===0 ? C.green : C.muted,
+                      borderRadius:9, padding:"4px 11px", fontSize:11.5, fontWeight:800,
+                    }}>{p}</span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div style={{ flex:1, minWidth:0, paddingTop:2 }}>
-              <Badge>שחקן מאומת</Badge>
-              <div style={{ fontSize:24, fontWeight:900, lineHeight:1.15, marginTop:10, letterSpacing:0.2 }}>{player.name}</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginTop:9 }}>
-                {[player.team, player.league, player.position].filter(Boolean).map((p,idx) => (
-                  <span key={idx} style={{
-                    background:C.card, border:`1px solid ${C.border}`,
-                    color: idx===0 ? C.text : C.muted,
-                    borderRadius:8, padding:"4px 10px", fontSize:11.5, fontWeight:700,
-                  }}>{p}</span>
-                ))}
+            {/* match-fit / rating strip */}
+            {player.similarity != null && (
+              <div style={{
+                display:"flex", alignItems:"center", gap:13, marginTop:18,
+                background:`linear-gradient(135deg,${C.green}1A, ${C.teal}10)`,
+                border:`1px solid ${C.green}3A`, borderRadius:16, padding:"13px 15px",
+              }}>
+                <div style={{
+                  width:34, height:34, borderRadius:11, flexShrink:0,
+                  background:`${C.gold}1A`, color:C.gold,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                }}>{Icon.star}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:11, color:C.muted, fontWeight:700 }}>אחוז התאמה</div>
+                  <div style={{ marginTop:7 }}><StatBar value={player.similarity} max={100} color={C.green}/></div>
+                </div>
+                <div style={{ fontWeight:900, fontSize:22, color:C.green }}>{player.similarity}%</div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* match-fit / rating strip */}
-          {player.similarity != null && (
-            <div style={{
-              display:"flex", alignItems:"center", gap:12, marginBottom:18,
-              background:`linear-gradient(135deg,${C.green}14,transparent)`,
-              border:`1px solid ${C.green}33`, borderRadius:16, padding:"12px 14px",
-            }}>
-              <div style={{ color:C.gold, display:"flex" }}>{Icon.star}</div>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:11, color:C.muted }}>אחוז התאמה</div>
-                <div style={{ marginTop:5 }}><StatBar value={player.similarity} max={100} color={C.green}/></div>
-              </div>
-              <div style={{ fontWeight:900, fontSize:20, color:C.green }}>{player.similarity}%</div>
-            </div>
-          )}
-
           {/* Quick stats */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, paddingBottom:20 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, marginTop:16 }}>
             {[["goal",player.goals,"שערים"],["calendar",player.apps,"משחקים"],["clock",player.minutes,"דקות"],["target",player.assists,"בישולים"]].map(([ic,v,l]) => (
               <div key={l} style={{
-                background:C.card, border:`1px solid ${C.border}`, borderRadius:16,
-                padding:"12px 6px", textAlign:"center",
+                background:`linear-gradient(160deg,${C.card2},${C.card})`,
+                border:`1px solid ${C.border}`, borderRadius:18,
+                padding:"13px 6px", textAlign:"center",
+                boxShadow:"0 6px 18px rgba(0,0,0,0.25)",
               }}>
-                <div style={{ display:"flex", justifyContent:"center", marginBottom:5 }}><IconEl name={ic} size={18} color={C.green}/></div>
-                <div style={{ fontWeight:900, fontSize:18, color:C.text }}>{v}</div>
-                <div style={{ color:C.muted, fontSize:10, marginTop:2 }}>{l}</div>
+                <div style={{ display:"flex", justifyContent:"center", marginBottom:6 }}>
+                  <div style={{
+                    width:30, height:30, borderRadius:9,
+                    background:`${C.green}14`,
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                  }}><IconEl name={ic} size={16} color={C.green}/></div>
+                </div>
+                <div style={{ fontWeight:900, fontSize:19, color:C.text }}>{v}</div>
+                <div style={{ color:C.muted, fontSize:10, marginTop:2, fontWeight:600 }}>{l}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display:"flex", gap:6, padding:"14px 20px 0" }}>
+      {/* Premium pill tabs */}
+      <div style={{
+        display:"flex", gap:4, margin:"4px 20px 0", padding:5,
+        background:C.surface, border:`1px solid ${C.border}`, borderRadius:16,
+      }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             style={{
-              flex:1, cursor:"pointer", padding:"11px 8px",
+              flex:1, cursor:"pointer", padding:"10px 8px",
               fontFamily:"inherit", fontSize:13.5, fontWeight:800,
               borderRadius:12,
               color: tab===t.id ? C.bg : C.muted,
-              background: tab===t.id ? C.green : C.card,
-              border: tab===t.id ? `1px solid ${C.green}` : `1px solid ${C.border}`,
+              background: tab===t.id ? `linear-gradient(135deg,${C.green},${C.greenDim})` : "transparent",
+              border:"none",
               boxShadow: tab===t.id ? `0 8px 22px ${C.greenGlow}` : "none",
               transition:"all 0.2s",
             }}>{t.label}</button>
@@ -1217,17 +1254,20 @@ function Screen7({ player, onGoHome }) {
               ["calendar","תאריך לידה",player.birth],
             ].map(([ic,l,v]) => (
               <div key={l} style={{
-                background:C.card, border:`1px solid ${C.border}`, borderRadius:16,
+                background:`linear-gradient(160deg,${C.card2},${C.card})`,
+                border:`1px solid ${C.border}`, borderRadius:16,
                 padding:"14px 16px", display:"flex", gap:14, alignItems:"center",
+                boxShadow:"0 6px 16px rgba(0,0,0,0.22)",
               }}>
                 <div style={{
-                  width:40, height:40, borderRadius:12, flexShrink:0,
-                  background:`${C.green}14`, border:`1px solid ${C.green}26`,
+                  width:42, height:42, borderRadius:13, flexShrink:0,
+                  background:`${C.green}16`, border:`1px solid ${C.green}2E`,
                   display:"flex", alignItems:"center", justifyContent:"center",
+                  boxShadow:`inset 0 1px 0 ${C.green}1A`,
                 }}><IconEl name={ic} size={19} color={C.green}/></div>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ color:C.muted, fontSize:11 }}>{l}</div>
-                  <div style={{ fontWeight:800, fontSize:14.5, marginTop:3 }}>{v}</div>
+                  <div style={{ color:C.muted, fontSize:11, fontWeight:600 }}>{l}</div>
+                  <div style={{ fontWeight:800, fontSize:15, marginTop:3 }}>{v}</div>
                 </div>
               </div>
             ))}
@@ -1237,8 +1277,8 @@ function Screen7({ player, onGoHome }) {
         {/* STATS */}
         {tab === "stats" && (
           <div>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
-              <span style={{ width:4, height:18, borderRadius:2, background:C.green }}/>
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:15 }}>
+              <span style={{ width:4, height:18, borderRadius:2, background:`linear-gradient(${C.green},${C.greenDim})` }}/>
               <div style={{ fontSize:16, fontWeight:900 }}>עונת 2025/26</div>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:20 }}>
@@ -1250,16 +1290,20 @@ function Screen7({ player, onGoHome }) {
                 ["ycard","כרטיסים צהובים",player.yellow,10,"#F59E0B"],
                 ["rcard","כרטיסים אדומים",player.red,5,C.red],
               ].map(([ic,l,v,max,col]) => (
-                <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:18, padding:"15px 14px" }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                <div key={l} style={{
+                  background:`linear-gradient(160deg,${C.card2},${C.card})`,
+                  border:`1px solid ${C.border}`, borderRadius:18, padding:"16px 14px",
+                  boxShadow:"0 6px 18px rgba(0,0,0,0.25)",
+                }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:11 }}>
                     <div style={{
-                      width:32, height:32, borderRadius:9,
-                      background:`${col}16`, display:"flex", alignItems:"center", justifyContent:"center",
+                      width:34, height:34, borderRadius:10,
+                      background:`${col}18`, display:"flex", alignItems:"center", justifyContent:"center",
                     }}><IconEl name={ic} size={17} color={col}/></div>
-                    <span style={{ fontWeight:900, fontSize:22, color:col }}>{v}</span>
+                    <span style={{ fontWeight:900, fontSize:23, color:col }}>{v}</span>
                   </div>
                   <StatBar value={v} max={max} color={col}/>
-                  <div style={{ color:C.muted, fontSize:11, marginTop:8 }}>{l}</div>
+                  <div style={{ color:C.muted, fontSize:11, marginTop:9, fontWeight:600 }}>{l}</div>
                 </div>
               ))}
             </div>
@@ -1271,25 +1315,26 @@ function Screen7({ player, onGoHome }) {
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
             {CAREER.map((c,i) => (
               <div key={i} style={{
-                background: i===0 ? `linear-gradient(135deg,${C.green}12,${C.card})` : C.card,
+                background: i===0 ? `linear-gradient(135deg,${C.green}16,${C.card})` : `linear-gradient(160deg,${C.card2},${C.card})`,
                 border:`1px solid ${i===0 ? C.green+"4D" : C.border}`,
                 borderRadius:18, padding:"16px 18px",
                 position:"relative", overflow:"hidden",
+                boxShadow: i===0 ? `0 10px 26px ${C.greenGlow}` : "0 6px 16px rgba(0,0,0,0.22)",
               }}>
-                {i===0 && <div style={{ position:"absolute", top:0, insetInlineEnd:0, bottom:0, width:3, background:C.green }}/>}
+                {i===0 && <div style={{ position:"absolute", top:0, insetInlineEnd:0, bottom:0, width:3, background:`linear-gradient(${C.green},${C.greenDim})` }}/>}
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
                   <div style={{ fontWeight:900, fontSize:15.5 }}>{c.team}</div>
                   <div style={{
                     color: i===0 ? C.green : C.muted, fontSize:12, fontWeight:800,
-                    background: i===0 ? `${C.green}16` : "transparent",
-                    borderRadius:8, padding: i===0 ? "3px 9px" : "0",
+                    background: i===0 ? `${C.green}18` : "transparent",
+                    borderRadius:8, padding: i===0 ? "3px 10px" : "0",
                   }}>{c.season}</div>
                 </div>
-                <div style={{ color:C.muted, fontSize:12, marginBottom:12 }}>{c.league}</div>
-                <div style={{ display:"flex", gap:20 }}>
+                <div style={{ color:C.muted, fontSize:12, marginBottom:13 }}>{c.league}</div>
+                <div style={{ display:"flex", gap:22 }}>
                   {[["משחקים",c.apps],["שערים",c.goals]].map(([l,v]) => (
                     <div key={l} style={{ display:"flex", alignItems:"baseline", gap:5 }}>
-                      <span style={{ color:C.green, fontWeight:900, fontSize:17 }}>{v}</span>
+                      <span style={{ color:C.green, fontWeight:900, fontSize:18 }}>{v}</span>
                       <span style={{ color:C.muted, fontSize:12 }}>{l}</span>
                     </div>
                   ))}
