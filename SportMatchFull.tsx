@@ -1092,71 +1092,122 @@ function Screen7({ player, onGoHome }) {
   const [tab, setTab] = useState("overview");
 
   const tabs = [
-    { id:"overview", label:"Overview" },
-    { id:"stats",    label:"Stats" },
-    { id:"career",   label:"Career" },
+    { id:"overview", label:"סקירה" },
+    { id:"stats",    label:"סטטיסטיקה" },
+    { id:"career",   label:"קריירה" },
   ];
 
   return (
     <div style={{ paddingBottom:30 }}>
-      {/* Hero */}
-      <div style={{
-        position:"relative", padding:"28px 20px 0",
-        background:`linear-gradient(180deg,${C.green}12 0%,transparent 100%)`,
-        borderBottom:`1px solid ${C.border}`,
-      }}>
-        <div style={{ display:"flex", gap:16, alignItems:"flex-end", marginBottom:16 }}>
-          {/* Avatar */}
-          <div style={{
-            width:88, height:104, borderRadius:22, flexShrink:0,
-            background:`linear-gradient(135deg,${C.green}33,${C.blue}22)`,
-            border:`2px solid ${C.green}66`,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:48,
-            boxShadow:`0 8px 30px ${C.greenGlow}`,
-          }}>{Icon.football}</div>
+      {/* ── HERO ── */}
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:`1px solid ${C.border}` }}>
+        {/* layered green ambience */}
+        <div style={{ position:"absolute", inset:0, background:`radial-gradient(120% 90% at 85% -10%, ${C.green}26 0%, transparent 55%), radial-gradient(120% 90% at 0% 0%, ${C.greenDim}22 0%, transparent 50%), linear-gradient(180deg, ${C.surface} 0%, ${C.bg} 100%)` }}/>
+        {/* subtle pitch lines */}
+        <svg width="100%" height="100%" style={{ position:"absolute", inset:0, opacity:0.5 }} preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="p7line" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={C.green} stopOpacity="0.14"/>
+              <stop offset="100%" stopColor={C.green} stopOpacity="0"/>
+            </linearGradient>
+          </defs>
+          <circle cx="86%" cy="6%" r="70" fill="none" stroke="url(#p7line)" strokeWidth="1.5"/>
+          <circle cx="86%" cy="6%" r="38" fill="none" stroke="url(#p7line)" strokeWidth="1.5"/>
+        </svg>
 
-          <div style={{ flex:1, paddingBottom:4 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
-              <Badge>Verified Player</Badge>
+        <div style={{ position:"relative", padding:"30px 20px 0" }}>
+          <div style={{ display:"flex", gap:16, alignItems:"flex-start", marginBottom:20 }}>
+            {/* Avatar / crest */}
+            <div style={{ position:"relative", flexShrink:0 }}>
+              <div style={{
+                width:96, height:114, borderRadius:24,
+                background:`linear-gradient(160deg,${C.green}30,${C.card2})`,
+                border:`1.5px solid ${C.green}55`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                color:C.green,
+                boxShadow:`0 12px 36px ${C.greenGlow}, inset 0 1px 0 ${C.green}30`,
+              }}>
+                <div style={{ transform:"scale(2.1)" }}>{Icon.football}</div>
+              </div>
+              {/* jersey number badge */}
+              <div style={{
+                position:"absolute", bottom:-8, insetInlineStart:-8,
+                minWidth:30, height:30, padding:"0 7px", borderRadius:10,
+                background:C.green, color:C.bg,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                fontWeight:900, fontSize:14,
+                boxShadow:`0 6px 16px ${C.greenGlow}`,
+              }}>{player.position?.slice(0,3) || "★"}</div>
             </div>
-            <div style={{ fontSize:22, fontWeight:900, lineHeight:1.2 }}>{player.name}</div>
-            <div style={{ color:C.muted, fontSize:13, marginTop:4 }}>
-              {player.team} · {player.league}
+
+            <div style={{ flex:1, minWidth:0, paddingTop:2 }}>
+              <Badge>שחקן מאומת</Badge>
+              <div style={{ fontSize:24, fontWeight:900, lineHeight:1.15, marginTop:10, letterSpacing:0.2 }}>{player.name}</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginTop:9 }}>
+                {[player.team, player.league, player.position].filter(Boolean).map((p,idx) => (
+                  <span key={idx} style={{
+                    background:C.card, border:`1px solid ${C.border}`,
+                    color: idx===0 ? C.text : C.muted,
+                    borderRadius:8, padding:"4px 10px", fontSize:11.5, fontWeight:700,
+                  }}>{p}</span>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Quick stats */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, paddingBottom:18 }}>
-          {[["goal",player.goals,"שערים"],["calendar",player.apps,"משחקים"],["clock",player.minutes,"דקות"],["target",player.assists,"בישולים"]].map(([ic,v,l]) => (
-            <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:"10px 6px", textAlign:"center" }}>
-              <IconEl name={ic} size={18} color={C.green}/>
-              <div style={{ fontWeight:900, fontSize:17, color:C.green, marginTop:2 }}>{v}</div>
-              <div style={{ color:C.muted, fontSize:10, marginTop:1 }}>{l}</div>
+          {/* match-fit / rating strip */}
+          {player.similarity != null && (
+            <div style={{
+              display:"flex", alignItems:"center", gap:12, marginBottom:18,
+              background:`linear-gradient(135deg,${C.green}14,transparent)`,
+              border:`1px solid ${C.green}33`, borderRadius:16, padding:"12px 14px",
+            }}>
+              <div style={{ color:C.gold, display:"flex" }}>{Icon.star}</div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:11, color:C.muted }}>אחוז התאמה</div>
+                <div style={{ marginTop:5 }}><StatBar value={player.similarity} max={100} color={C.green}/></div>
+              </div>
+              <div style={{ fontWeight:900, fontSize:20, color:C.green }}>{player.similarity}%</div>
             </div>
-          ))}
+          )}
+
+          {/* Quick stats */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, paddingBottom:20 }}>
+            {[["goal",player.goals,"שערים"],["calendar",player.apps,"משחקים"],["clock",player.minutes,"דקות"],["target",player.assists,"בישולים"]].map(([ic,v,l]) => (
+              <div key={l} style={{
+                background:C.card, border:`1px solid ${C.border}`, borderRadius:16,
+                padding:"12px 6px", textAlign:"center",
+              }}>
+                <div style={{ display:"flex", justifyContent:"center", marginBottom:5 }}><IconEl name={ic} size={18} color={C.green}/></div>
+                <div style={{ fontWeight:900, fontSize:18, color:C.text }}>{v}</div>
+                <div style={{ color:C.muted, fontSize:10, marginTop:2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display:"flex", gap:0, borderBottom:`1px solid ${C.border}`, padding:"0 20px" }}>
+      <div style={{ display:"flex", gap:6, padding:"14px 20px 0" }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             style={{
-              flex:1, background:"none", border:"none", cursor:"pointer",
-              padding:"14px 8px", fontFamily:"inherit", fontSize:14, fontWeight:700,
-              color: tab===t.id ? C.green : C.muted,
-              borderBottom: tab===t.id ? `2px solid ${C.green}` : "2px solid transparent",
+              flex:1, cursor:"pointer", padding:"11px 8px",
+              fontFamily:"inherit", fontSize:13.5, fontWeight:800,
+              borderRadius:12,
+              color: tab===t.id ? C.bg : C.muted,
+              background: tab===t.id ? C.green : C.card,
+              border: tab===t.id ? `1px solid ${C.green}` : `1px solid ${C.border}`,
+              boxShadow: tab===t.id ? `0 8px 22px ${C.greenGlow}` : "none",
               transition:"all 0.2s",
             }}>{t.label}</button>
         ))}
       </div>
 
-      <div style={{ padding:"20px 20px 0" }}>
+      <div style={{ padding:"18px 20px 0" }}>
         {/* OVERVIEW */}
         {tab === "overview" && (
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                         {[
               ["stadium","קבוצה נוכחית",player.team],
               ["globe","ליגה",player.league],
@@ -1165,11 +1216,18 @@ function Screen7({ player, onGoHome }) {
               ["globe2","לאום",player.nationality],
               ["calendar","תאריך לידה",player.birth],
             ].map(([ic,l,v]) => (
-              <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:"13px 16px", display:"flex", gap:12, alignItems:"center" }}>
-                <IconEl name={ic} size={20} color={C.teal}/>
-                <div style={{ flex:1 }}>
+              <div key={l} style={{
+                background:C.card, border:`1px solid ${C.border}`, borderRadius:16,
+                padding:"14px 16px", display:"flex", gap:14, alignItems:"center",
+              }}>
+                <div style={{
+                  width:40, height:40, borderRadius:12, flexShrink:0,
+                  background:`${C.green}14`, border:`1px solid ${C.green}26`,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                }}><IconEl name={ic} size={19} color={C.green}/></div>
+                <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ color:C.muted, fontSize:11 }}>{l}</div>
-                  <div style={{ fontWeight:700, fontSize:14, marginTop:2 }}>{v}</div>
+                  <div style={{ fontWeight:800, fontSize:14.5, marginTop:3 }}>{v}</div>
                 </div>
               </div>
             ))}
@@ -1179,23 +1237,29 @@ function Screen7({ player, onGoHome }) {
         {/* STATS */}
         {tab === "stats" && (
           <div>
-            <div style={{ fontSize:16, fontWeight:800, marginBottom:14 }}>עונת 2025/26</div>
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
+              <span style={{ width:4, height:18, borderRadius:2, background:C.green }}/>
+              <div style={{ fontSize:16, fontWeight:900 }}>עונת 2025/26</div>
+            </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:20 }}>
               {[
                 ["goal","שערים",player.goals,15,C.green],
-                ["calendar","משחקים",player.apps,38,C.blue],
+                ["calendar","משחקים",player.apps,38,C.green],
                 ["clock","דקות",player.minutes,3420,C.gold],
-                ["target","בישולים",player.assists,10,C.green],
+                ["target","בישולים",player.assists,10,C.teal],
                 ["ycard","כרטיסים צהובים",player.yellow,10,"#F59E0B"],
                 ["rcard","כרטיסים אדומים",player.red,5,C.red],
               ].map(([ic,l,v,max,col]) => (
-                <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:16, padding:"14px 14px" }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
-                    <IconEl name={ic} size={18} color={col}/>
-                    <span style={{ fontWeight:900, fontSize:20, color:col }}>{v}</span>
+                <div key={l} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:18, padding:"15px 14px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                    <div style={{
+                      width:32, height:32, borderRadius:9,
+                      background:`${col}16`, display:"flex", alignItems:"center", justifyContent:"center",
+                    }}><IconEl name={ic} size={17} color={col}/></div>
+                    <span style={{ fontWeight:900, fontSize:22, color:col }}>{v}</span>
                   </div>
                   <StatBar value={v} max={max} color={col}/>
-                  <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>{l}</div>
+                  <div style={{ color:C.muted, fontSize:11, marginTop:8 }}>{l}</div>
                 </div>
               ))}
             </div>
@@ -1207,21 +1271,26 @@ function Screen7({ player, onGoHome }) {
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
             {CAREER.map((c,i) => (
               <div key={i} style={{
-                background:C.card, border:`1px solid ${i===0 ? C.green+"44" : C.border}`,
-                borderRadius:16, padding:"14px 16px",
+                background: i===0 ? `linear-gradient(135deg,${C.green}12,${C.card})` : C.card,
+                border:`1px solid ${i===0 ? C.green+"4D" : C.border}`,
+                borderRadius:18, padding:"16px 18px",
                 position:"relative", overflow:"hidden",
               }}>
-                {i===0 && <div style={{ position:"absolute", top:0, right:0, bottom:0, width:3, background:`linear-gradient(${C.green},${C.blue})` }}/>}
-                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
-                  <div style={{ fontWeight:800, fontSize:15 }}>{c.team}</div>
-                  <div style={{ color: i===0 ? C.green : C.muted, fontSize:13, fontWeight:700 }}>{c.season}</div>
+                {i===0 && <div style={{ position:"absolute", top:0, insetInlineEnd:0, bottom:0, width:3, background:C.green }}/>}
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                  <div style={{ fontWeight:900, fontSize:15.5 }}>{c.team}</div>
+                  <div style={{
+                    color: i===0 ? C.green : C.muted, fontSize:12, fontWeight:800,
+                    background: i===0 ? `${C.green}16` : "transparent",
+                    borderRadius:8, padding: i===0 ? "3px 9px" : "0",
+                  }}>{c.season}</div>
                 </div>
-                <div style={{ color:C.muted, fontSize:12, marginBottom:10 }}>{c.league}</div>
-                <div style={{ display:"flex", gap:16 }}>
+                <div style={{ color:C.muted, fontSize:12, marginBottom:12 }}>{c.league}</div>
+                <div style={{ display:"flex", gap:20 }}>
                   {[["משחקים",c.apps],["שערים",c.goals]].map(([l,v]) => (
-                    <div key={l}>
-                      <span style={{ color:C.green, fontWeight:900, fontSize:16 }}>{v}</span>
-                      <span style={{ color:C.muted, fontSize:12, marginRight:4 }}> {l}</span>
+                    <div key={l} style={{ display:"flex", alignItems:"baseline", gap:5 }}>
+                      <span style={{ color:C.green, fontWeight:900, fontSize:17 }}>{v}</span>
+                      <span style={{ color:C.muted, fontSize:12 }}>{l}</span>
                     </div>
                   ))}
                 </div>
